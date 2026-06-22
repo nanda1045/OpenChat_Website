@@ -58,7 +58,7 @@ export default async function SearchPage({
                 Posts
               </h2>
               {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <PostCard key={post.id} post={post} viewerId={me?.id} />
               ))}
             </section>
           )}

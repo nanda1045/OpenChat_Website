@@ -14,9 +14,11 @@ import { PostCard } from "@/components/post/PostCard";
 export function FeedList({
   initialItems,
   initialCursor,
+  viewerId,
 }: {
   initialItems: PostWithAuthor[];
   initialCursor: string | null;
+  viewerId?: string;
 }) {
   const [items, setItems] = useState(initialItems);
   const [cursor, setCursor] = useState(initialCursor);
@@ -34,7 +36,7 @@ export function FeedList({
   return (
     <div>
       {items.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} viewerId={viewerId} />
       ))}
 
       {cursor ? (

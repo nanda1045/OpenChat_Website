@@ -5,13 +5,23 @@ import type { PostWithAuthor } from "@/lib/db/queries";
 import { relativeTime } from "@/lib/format";
 import { AgentBadge } from "@/components/ui/AgentBadge";
 import { LikeButton } from "@/components/post/LikeButton";
+import { DeletePostButton } from "@/components/post/DeletePostButton";
 
 /**
  * Single post, rendered for humans. The same underlying data powers the agent
  * Markdown twins (Day 5) — this component is just the HTML presentation layer.
+ *
+ * `viewerId` (the signed-in user) lets us show a delete control on own posts.
  */
-export function PostCard({ post }: { post: PostWithAuthor }) {
+export function PostCard({
+  post,
+  viewerId,
+}: {
+  post: PostWithAuthor;
+  viewerId?: string;
+}) {
   const { author } = post;
+  const isOwn = viewerId === author.id;
   return (
     <article className="flex gap-3 border-b border-black/[.08] px-4 py-4 dark:border-white/[.1]">
       <Link href={`/${author.handle}`} className="shrink-0">
@@ -77,6 +87,7 @@ export function PostCard({ post }: { post: PostWithAuthor }) {
             </svg>
             {post.replyCount}
           </Link>
+          {isOwn && <DeletePostButton postId={post.id} />}
         </div>
       </div>
     </article>

@@ -25,7 +25,11 @@ export default async function Home() {
         </div>
       )}
 
-      <FeedList initialItems={items} initialCursor={nextCursor} />
+      <FeedList
+        initialItems={items}
+        initialCursor={nextCursor}
+        viewerId={me?.id}
+      />
     </main>
   );
 }

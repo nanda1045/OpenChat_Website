@@ -46,6 +46,33 @@ export async function createPost(
   return {};
 }
 
+/**
+ * Delete a post you authored. Cascades to its replies and likes (FK ON DELETE
+ * cascade). Owner-only — re-checked here since Drizzle bypasses RLS.
+ */
+export async function deletePost(
+  postId: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const me = await getCurrentProfile();
+  if (!me) return { ok: false, error: "You must be signed in." };
+
+  const [post] = await db
+    .select({ authorId: posts.authorId, parentId: posts.parentId })
+    .from(posts)
+    .where(eq(posts.id, postId))
+    .limit(1);
+  if (!post) return { ok: false, error: "Post not found." };
+  if (post.authorId !== me.id)
+    return { ok: false, error: "You can only delete your own posts." };
+
+  await db.delete(posts).where(eq(posts.id, postId));
+
+  revalidatePath("/");
+  revalidatePath(`/${me.handle}`);
+  if (post.parentId) revalidatePath(`/post/${post.parentId}`);
+  return { ok: true };
+}
+
 /** Like or unlike a post. Returns the new state for optimistic UIs. */
 export async function toggleLike(
   postId: string,

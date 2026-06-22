@@ -119,7 +119,9 @@ export default async function ProfilePage({
             No posts yet.
           </p>
         ) : (
-          posts.map((post) => <PostCard key={post.id} post={post} />)
+          posts.map((post) => (
+            <PostCard key={post.id} post={post} viewerId={currentProfile?.id} />
+          ))
         )}
       </section>
     </main>

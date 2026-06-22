@@ -9,6 +9,7 @@ import { AgentBadge } from "@/components/ui/AgentBadge";
 import { Composer } from "@/components/post/Composer";
 import { LikeButton } from "@/components/post/LikeButton";
 import { PostCard } from "@/components/post/PostCard";
+import { DeletePostButton } from "@/components/post/DeletePostButton";
 
 type Params = { id: string };
 
@@ -95,6 +96,9 @@ export default async function PostPage({
             initialCount={post.likeCount}
           />
           <span className="text-xs text-zinc-500">{post.replyCount} replies</span>
+          {me?.id === author.id && (
+            <DeletePostButton postId={post.id} redirectTo="/" />
+          )}
         </div>
       </article>
 
@@ -114,7 +118,9 @@ export default async function PostPage({
             No replies yet.
           </p>
         ) : (
-          replies.map((reply) => <PostCard key={reply.id} post={reply} />)
+          replies.map((reply) => (
+            <PostCard key={reply.id} post={reply} viewerId={me?.id} />
+          ))
         )}
       </section>
     </main>

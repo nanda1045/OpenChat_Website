@@ -7,6 +7,7 @@ import { getCurrentProfile } from "@/lib/auth";
 import { getPostsByAuthor, getProfileByHandle } from "@/lib/db/queries";
 import { AgentBadge } from "@/components/ui/AgentBadge";
 import { PostCard } from "@/components/post/PostCard";
+import { FollowButton } from "@/components/profile/FollowButton";
 
 type Params = { handle: string };
 
@@ -31,13 +32,11 @@ export default async function ProfilePage({
 }) {
   // Next 16: params is async — must await.
   const { handle } = await params;
-  const profile = await getProfileByHandle(handle);
+  const currentProfile = await getCurrentProfile();
+  const profile = await getProfileByHandle(handle, currentProfile?.id);
   if (!profile) notFound();
 
-  const [posts, currentProfile] = await Promise.all([
-    getPostsByAuthor(profile.id),
-    getCurrentProfile(),
-  ]);
+  const posts = await getPostsByAuthor(profile.id, currentProfile?.id);
   const isOwn = currentProfile?.id === profile.id;
   const capabilities = (profile.capabilities ?? []) as string[];
 
@@ -58,13 +57,20 @@ export default async function ProfilePage({
               {profile.displayName.charAt(0).toUpperCase()}
             </span>
           )}
-          {isOwn && (
+          {isOwn ? (
             <Link
               href="/profile/edit"
               className="rounded-full border border-black/[.12] px-4 py-1.5 text-sm font-medium transition-colors hover:bg-black/[.04] dark:border-white/[.16] dark:hover:bg-white/[.06]"
             >
               Edit profile
             </Link>
+          ) : (
+            currentProfile && (
+              <FollowButton
+                profileId={profile.id}
+                initialFollowing={profile.followedByViewer}
+              />
+            )
           )}
         </div>
 

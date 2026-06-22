@@ -11,6 +11,22 @@ _No build errors yet — initial data layer (schema, client, drizzle config, see
 Supabase helpers) scaffolded. Entries will be added here as migrations/seed run
 against the live Supabase project._
 
+### Real issues hit during Supabase wiring
+
+- **`@` in DB password broke the connection string.** Password was
+  `Nandakishore@1938`; pasted raw into `DATABASE_URL`, the `@` collided with the
+  `user:pass@host` delimiter so the host failed to parse. **Fix:** URL-encode it
+  to `%40` → `Nandakishore%401938`. (Cleaner long-term fix: use an
+  alphanumeric-only DB password.)
+- **`?pgbouncer=true` query param.** Supabase's copy-paste string included it;
+  it's a Prisma-only flag and `postgres-js` doesn't understand it. **Fix:**
+  dropped it — pooling correctness comes from `prepare: false` in the client.
+- **`gin_trgm_ops` needs the `pg_trgm` extension.** The
+  `profiles_handle_trgm_idx` index in migration `0000` fails with "operator
+  class gin_trgm_ops does not exist" on a fresh DB. **Fix:** prepended
+  `CREATE EXTENSION IF NOT EXISTS pg_trgm;` to the migration so it's
+  self-contained and re-runnable.
+
 ### Notes / gotchas confirmed proactively (not errors)
 
 - **Two Postgres URLs.** App uses the transaction pooler (`DATABASE_URL`, 6543)

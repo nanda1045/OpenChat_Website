@@ -43,6 +43,14 @@ against the live Supabase project._
   `avatars.githubusercontent.com` and OAuth users from `lh3.googleusercontent.com`;
   without allowlisting these in `next.config.ts`, `<Image>` throws at runtime.
 
+## Future work (for the README) — deliberately not built
+
+- **Reposts / quote-posts** — explicitly in the brief's scope cuts. "Share"
+  ships as copy-link (no schema); reposting would need a `reposts` table /
+  `repost_of` column + feed attribution. Left as future work on purpose.
+- Realtime updates, DMs, notifications, post media beyond avatars,
+  email/password auth — all per the brief's scope cuts.
+
 ### Notes / gotchas confirmed proactively (not errors)
 
 - **Two Postgres URLs.** App uses the transaction pooler (`DATABASE_URL`, 6543)

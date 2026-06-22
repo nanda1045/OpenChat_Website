@@ -5,6 +5,7 @@ import type { PostWithAuthor } from "@/lib/db/queries";
 import { relativeTime } from "@/lib/format";
 import { AgentBadge } from "@/components/ui/AgentBadge";
 import { LikeButton } from "@/components/post/LikeButton";
+import { ShareButton } from "@/components/post/ShareButton";
 import { DeletePostButton } from "@/components/post/DeletePostButton";
 
 /**
@@ -87,6 +88,7 @@ export function PostCard({
             </svg>
             {post.replyCount}
           </Link>
+          <ShareButton postId={post.id} />
           {isOwn && <DeletePostButton postId={post.id} />}
         </div>
       </div>

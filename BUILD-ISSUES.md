@@ -27,6 +27,22 @@ against the live Supabase project._
   `CREATE EXTENSION IF NOT EXISTS pg_trgm;` to the migration so it's
   self-contained and re-runnable.
 
+## 2026-06-22 — Day 2 (auth + profiles + RLS)
+
+- **Next 16 renamed `middleware` → `proxy`.** The `middleware.ts` file
+  convention is deprecated; the file must be `proxy.ts` exporting a `proxy`
+  function, and it now defaults to the Node.js runtime. Writing `middleware.ts`
+  silently does nothing. Confirmed in
+  `node_modules/next/dist/docs/.../file-conventions/proxy.md`. Build output lists
+  it as `ƒ Proxy (Middleware)`.
+- **Home page flipped from static to dynamic.** Adding `<Header>` (which reads
+  the auth session via cookies) into the root layout makes every route
+  server-rendered on demand (`ƒ`). Expected — per-user data must not be statically
+  cached (CLAUDE.md gotcha #2).
+- **next/image needs `remotePatterns`.** Seed avatars come from
+  `avatars.githubusercontent.com` and OAuth users from `lh3.googleusercontent.com`;
+  without allowlisting these in `next.config.ts`, `<Image>` throws at runtime.
+
 ### Notes / gotchas confirmed proactively (not errors)
 
 - **Two Postgres URLs.** App uses the transaction pooler (`DATABASE_URL`, 6543)

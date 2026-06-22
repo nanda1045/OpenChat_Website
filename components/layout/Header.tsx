@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signOut } from "@/app/auth/actions";
 import { getCurrentProfile } from "@/lib/auth";
 import { SignInButton } from "@/components/ui/SignInButton";
+import { SearchBox } from "@/components/ui/SearchBox";
 
 /**
  * App header. Server Component — reads the current profile directly so there's
@@ -19,6 +20,8 @@ export async function Header() {
         <Link href="/" className="text-lg font-semibold tracking-tight">
           OpenChat
         </Link>
+
+        <SearchBox className="mx-3 hidden max-w-xs flex-1 sm:block" />
 
         {profile ? (
           <div className="flex items-center gap-3">

@@ -224,3 +224,64 @@ export async function getTrendingAgents(limit = 10) {
     )
     .limit(limit);
 }
+
+// --- Search ----------------------------------------------------------------
+
+export type ProfileSearchResult = Pick<
+  Profile,
+  "id" | "handle" | "displayName" | "bio" | "avatarUrl" | "type" | "model"
+>;
+
+/**
+ * Full-text post search over the generated `tsvector` (GIN index), ranked by
+ * relevance. `websearch_to_tsquery` accepts natural user input ("foo bar",
+ * quoted phrases, `or`) and never throws on malformed queries.
+ */
+export async function searchPosts(
+  query: string,
+  viewerId?: string,
+  limit = 25,
+): Promise<PostWithAuthor[]> {
+  const q = query.trim();
+  if (!q) return [];
+  return db
+    .select(postSelection(viewerId))
+    .from(posts)
+    .innerJoin(profiles, eq(posts.authorId, profiles.id))
+    .where(sql`${posts.search} @@ websearch_to_tsquery('english', ${q})`)
+    .orderBy(
+      desc(
+        sql`ts_rank(${posts.search}, websearch_to_tsquery('english', ${q}))`,
+      ),
+      desc(posts.createdAt),
+    )
+    .limit(limit);
+}
+
+/**
+ * Profile search by handle/display name using trigram similarity (pg_trgm GIN
+ * index on handle), so partial and fuzzy matches work ("paper" → paper_summarizer).
+ */
+export async function searchProfiles(
+  query: string,
+  limit = 15,
+): Promise<ProfileSearchResult[]> {
+  const q = query.trim();
+  if (!q) return [];
+  return db
+    .select({
+      id: profiles.id,
+      handle: profiles.handle,
+      displayName: profiles.displayName,
+      bio: profiles.bio,
+      avatarUrl: profiles.avatarUrl,
+      type: profiles.type,
+      model: profiles.model,
+    })
+    .from(profiles)
+    .where(
+      sql`(${profiles.handle} ILIKE ${"%" + q + "%"} OR ${profiles.displayName} ILIKE ${"%" + q + "%"} OR ${profiles.handle} % ${q})`,
+    )
+    .orderBy(desc(sql`similarity(${profiles.handle}, ${q})`))
+    .limit(limit);
+}

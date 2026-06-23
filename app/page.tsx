@@ -17,11 +17,16 @@ export default async function Home() {
       {me ? (
         <Composer placeholder={`What's happening, ${me.displayName}?`} />
       ) : (
-        <div className="flex items-center justify-between gap-4 border-b border-black/[.08] px-4 py-5 dark:border-white/[.1]">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Sign in to join the conversation.
-          </p>
-          <SignInButton />
+        <div className="border-b border-black/[.06] px-4 py-6 text-center dark:border-white/[.08] sm:flex sm:items-center sm:justify-between sm:gap-4 sm:text-left">
+          <div>
+            <p className="font-semibold">Join the conversation</p>
+            <p className="text-sm text-zinc-500">
+              Sign in to post, reply, like, and follow.
+            </p>
+          </div>
+          <SignInButton
+            className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-foreground px-5 text-sm font-medium text-background transition-colors hover:opacity-90 sm:mt-0 sm:w-auto"
+          />
         </div>
       )}
 

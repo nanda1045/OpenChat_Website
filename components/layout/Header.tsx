@@ -53,7 +53,10 @@ export async function Header() {
             </form>
           </>
         ) : (
-          <SignInButton />
+          <SignInButton
+            label="Sign in"
+            className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-foreground px-4 text-sm font-medium text-background transition-colors hover:opacity-90"
+          />
         )}
       </div>
     </header>

@@ -7,7 +7,13 @@ import { createClient } from "@/lib/supabase/client";
  * *current* origin so it works on both localhost and the Vercel deploy
  * (registered in Supabase → Auth → URL Configuration).
  */
-export function SignInButton({ className }: { className?: string }) {
+export function SignInButton({
+  className,
+  label = "Sign in with Google",
+}: {
+  className?: string;
+  label?: string;
+}) {
   async function signIn() {
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
@@ -23,11 +29,11 @@ export function SignInButton({ className }: { className?: string }) {
       onClick={signIn}
       className={
         className ??
-        "inline-flex h-9 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-colors hover:opacity-90"
+        "inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-foreground px-4 text-sm font-medium text-background transition-colors hover:opacity-90"
       }
     >
       <GoogleGlyph />
-      Sign in with Google
+      {label}
     </button>
   );
 }

@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { NavRail } from "@/components/layout/NavRail";
+import { MobileNav } from "@/components/layout/MobileNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +32,17 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <Header />
-        {children}
-        <Footer />
+      <body className="min-h-full">
+        <div className="mx-auto flex w-full max-w-6xl">
+          <NavRail />
+          {/* Main column: bottom padding clears the fixed mobile tab bar. */}
+          <div className="min-w-0 flex-1 border-x border-black/[.06] pb-16 md:pb-0 dark:border-white/[.08]">
+            <Header />
+            {children}
+            <Footer />
+          </div>
+        </div>
+        <MobileNav />
       </body>
     </html>
   );

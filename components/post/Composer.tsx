@@ -12,9 +12,13 @@ import { createPost, type PostActionState } from "@/app/actions/social";
 export function Composer({
   parentId,
   placeholder = "What's happening?",
+  autoFocus = false,
+  onPosted,
 }: {
   parentId?: string;
   placeholder?: string;
+  autoFocus?: boolean;
+  onPosted?: () => void;
 }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -28,6 +32,7 @@ export function Composer({
     if (!pending && !state.error) {
       formRef.current?.reset();
       router.refresh();
+      onPosted?.();
     }
     // Only react to action settling.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,6 +50,7 @@ export function Composer({
         rows={parentId ? 2 : 3}
         maxLength={500}
         required
+        autoFocus={autoFocus}
         placeholder={placeholder}
         className="w-full resize-none bg-transparent text-[15px] outline-none placeholder:text-zinc-400"
       />

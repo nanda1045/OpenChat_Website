@@ -5,14 +5,13 @@ import type { PostWithAuthor } from "@/lib/db/queries";
 import { relativeTime } from "@/lib/format";
 import { AgentBadge } from "@/components/ui/AgentBadge";
 import { LikeButton } from "@/components/post/LikeButton";
-import { ShareButton } from "@/components/post/ShareButton";
-import { DeletePostButton } from "@/components/post/DeletePostButton";
+import { PostMenu } from "@/components/post/PostMenu";
 
 /**
  * Single post, rendered for humans. The same underlying data powers the agent
- * Markdown twins (Day 5) — this component is just the HTML presentation layer.
+ * Markdown twins — this component is just the HTML presentation layer.
  *
- * `viewerId` (the signed-in user) lets us show a delete control on own posts.
+ * `viewerId` (the signed-in user) lets us show owner-only actions (delete).
  */
 export function PostCard({
   post,
@@ -23,8 +22,9 @@ export function PostCard({
 }) {
   const { author } = post;
   const isOwn = viewerId === author.id;
+
   return (
-    <article className="flex gap-3 border-b border-black/[.08] px-4 py-4 dark:border-white/[.1]">
+    <article className="flex gap-3 border-b border-black/[.06] px-4 py-3.5 transition-colors hover:bg-black/[.015] dark:border-white/[.08] dark:hover:bg-white/[.02]">
       <Link href={`/${author.handle}`} className="shrink-0">
         {author.avatarUrl ? (
           <Image
@@ -35,37 +35,40 @@ export function PostCard({
             className="rounded-full"
           />
         ) : (
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-200 text-sm dark:bg-zinc-700">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-200 text-sm font-medium dark:bg-zinc-700">
             {author.displayName.charAt(0).toUpperCase()}
           </span>
         )}
       </Link>
 
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-          <Link
-            href={`/${author.handle}`}
-            className="font-semibold hover:underline"
-          >
-            {author.displayName}
-          </Link>
-          <span className="text-zinc-500">@{author.handle}</span>
-          {author.type === "agent" && <AgentBadge model={author.model} />}
-          <Link
-            href={`/post/${post.id}`}
-            className="text-zinc-400 hover:underline"
-          >
-            · {relativeTime(post.createdAt)}
-          </Link>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
+            <Link
+              href={`/${author.handle}`}
+              className="font-semibold hover:underline"
+            >
+              {author.displayName}
+            </Link>
+            <span className="text-zinc-500">@{author.handle}</span>
+            {author.type === "agent" && <AgentBadge model={author.model} />}
+            <Link
+              href={`/post/${post.id}`}
+              className="text-zinc-400 hover:underline"
+            >
+              · {relativeTime(post.createdAt)}
+            </Link>
+          </div>
+          <PostMenu postId={post.id} isOwn={isOwn} />
         </div>
 
         <Link href={`/post/${post.id}`} className="block">
-          <p className="mt-1 whitespace-pre-wrap break-words text-[15px] leading-relaxed">
+          <p className="mt-0.5 whitespace-pre-wrap break-words text-[15px] leading-relaxed">
             {post.content}
           </p>
         </Link>
 
-        <div className="mt-2 flex items-center gap-5">
+        <div className="mt-2 flex items-center gap-6">
           <LikeButton
             postId={post.id}
             initialLiked={post.likedByViewer}
@@ -73,11 +76,11 @@ export function PostCard({
           />
           <Link
             href={`/post/${post.id}`}
-            className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-foreground"
+            className="inline-flex items-center gap-1.5 text-xs text-zinc-500 transition-colors hover:text-foreground"
           >
             <svg
-              width="15"
-              height="15"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -88,8 +91,6 @@ export function PostCard({
             </svg>
             {post.replyCount}
           </Link>
-          <ShareButton postId={post.id} />
-          {isOwn && <DeletePostButton postId={post.id} />}
         </div>
       </div>
     </article>

@@ -160,6 +160,21 @@ export async function getPostsByAuthor(
     .limit(limit);
 }
 
+/** Posts the given user has liked, most-recently-liked first (Activity page). */
+export async function getLikedPosts(
+  viewerId: string,
+  limit = 30,
+): Promise<PostWithAuthor[]> {
+  return db
+    .select(postSelection(viewerId))
+    .from(likes)
+    .innerJoin(posts, eq(likes.postId, posts.id))
+    .innerJoin(profiles, eq(posts.authorId, profiles.id))
+    .where(eq(likes.profileId, viewerId))
+    .orderBy(desc(likes.createdAt))
+    .limit(limit);
+}
+
 /** A profile plus counts and (viewer-aware) follow state. */
 export async function getProfileByHandle(handle: string, viewerId?: string) {
   const [row] = await db

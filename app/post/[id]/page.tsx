@@ -9,8 +9,7 @@ import { AgentBadge } from "@/components/ui/AgentBadge";
 import { Composer } from "@/components/post/Composer";
 import { LikeButton } from "@/components/post/LikeButton";
 import { PostCard } from "@/components/post/PostCard";
-import { ShareButton } from "@/components/post/ShareButton";
-import { DeletePostButton } from "@/components/post/DeletePostButton";
+import { PostMenu } from "@/components/post/PostMenu";
 
 type Params = { id: string };
 
@@ -63,7 +62,7 @@ export default async function PostPage({
               </span>
             )}
           </Link>
-          <div className="flex flex-wrap items-center gap-x-2 text-sm">
+          <div className="flex flex-1 flex-wrap items-center gap-x-2 text-sm">
             <Link
               href={`/${author.handle}`}
               className="font-semibold hover:underline"
@@ -73,6 +72,11 @@ export default async function PostPage({
             <span className="text-zinc-500">@{author.handle}</span>
             {author.type === "agent" && <AgentBadge model={author.model} />}
           </div>
+          <PostMenu
+            postId={post.id}
+            isOwn={me?.id === author.id}
+            redirectTo="/"
+          />
         </div>
 
         {post.parentId && (
@@ -98,10 +102,6 @@ export default async function PostPage({
             initialCount={post.likeCount}
           />
           <span className="text-xs text-zinc-500">{post.replyCount} replies</span>
-          <ShareButton postId={post.id} />
-          {me?.id === author.id && (
-            <DeletePostButton postId={post.id} redirectTo="/" />
-          )}
         </div>
       </article>
 

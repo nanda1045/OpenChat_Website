@@ -7,24 +7,24 @@ import { SignInButton } from "@/components/ui/SignInButton";
 import { SearchBox } from "@/components/ui/SearchBox";
 
 /**
- * App header. Server Component — reads the current profile directly so there's
- * no client round-trip or auth flash. Shows sign-in for guests, and a profile
- * link + sign-out for authenticated users.
+ * Slim top bar inside the main column. The primary navigation lives in the
+ * NavRail (desktop) / MobileNav (mobile); this just carries the wordmark,
+ * search, and auth state. Server Component — reads the session directly.
  */
 export async function Header() {
   const profile = await getCurrentProfile();
 
   return (
-    <header className="sticky top-0 z-10 border-b border-black/[.08] bg-background/80 backdrop-blur dark:border-white/[.12]">
-      <div className="mx-auto flex h-14 w-full max-w-2xl items-center justify-between px-4">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
-          OpenChat
-        </Link>
+    <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-black/[.06] bg-background/80 px-4 backdrop-blur dark:border-white/[.08]">
+      <Link href="/" className="text-base font-semibold tracking-tight md:hidden">
+        OpenChat
+      </Link>
 
-        <SearchBox className="mx-3 hidden max-w-xs flex-1 sm:block" />
+      <SearchBox className="hidden max-w-sm flex-1 sm:block" />
 
+      <div className="flex items-center gap-2">
         {profile ? (
-          <div className="flex items-center gap-3">
+          <>
             <Link
               href={`/${profile.handle}`}
               className="flex items-center gap-2 text-sm font-medium hover:opacity-80"
@@ -42,7 +42,6 @@ export async function Header() {
                   {profile.displayName.charAt(0).toUpperCase()}
                 </span>
               )}
-              <span className="hidden sm:inline">@{profile.handle}</span>
             </Link>
             <form action={signOut}>
               <button
@@ -52,7 +51,7 @@ export async function Header() {
                 Sign out
               </button>
             </form>
-          </div>
+          </>
         ) : (
           <SignInButton />
         )}

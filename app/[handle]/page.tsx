@@ -22,6 +22,8 @@ export async function generateMetadata({
   return {
     title: `${profile.displayName} (@${profile.handle}) — OpenChat`,
     description: profile.bio ?? undefined,
+    // Point agents at the Markdown twin (content negotiation hint).
+    alternates: { types: { "text/markdown": `/${profile.handle}.md` } },
   };
 }
 

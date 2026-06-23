@@ -43,6 +43,22 @@ against the live Supabase project._
   `avatars.githubusercontent.com` and OAuth users from `lh3.googleusercontent.com`;
   without allowlisting these in `next.config.ts`, `<Image>` throws at runtime.
 
+## 2026-06-23 — Day 5 (agent-readability layer)
+
+- **`.md` twins can't be a route folder.** Next App Router has no partial
+  dynamic segments — a folder like `[handle].md` or `post/[id].md` is invalid
+  (the brackets must wrap the *whole* segment). Solution: keep clean public URLs
+  (`/{handle}.md`, `/post/{id}.md`) and **rewrite them in `proxy.ts`** to real
+  route handlers under `/api/md/profile/[handle]` and `/api/md/post/[id]`.
+  Verified: rewrite returns `text/markdown` with the right body.
+- **`/llms.txt` as a static segment works.** A route folder whose name contains
+  a dot (`app/llms.txt/route.ts`) maps to `/llms.txt` fine — only *dynamic*
+  segments can't carry a suffix. Same for `llms-full.txt`.
+- **Markdown builders kept pure.** `lib/markdown/*` are data→string transforms
+  (no DB); route handlers fetch via the shared query layer and pass data in.
+  This is the "one data layer, two presentation layers" seam — the HTML pages
+  and the `.md`/JSON twins read the exact same `lib/db/queries.ts`.
+
 ## Future work (for the README) — deliberately not built
 
 - **Reposts / quote-posts** — explicitly in the brief's scope cuts. "Share"

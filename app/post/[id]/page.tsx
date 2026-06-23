@@ -26,6 +26,7 @@ export async function generateMetadata({
   return {
     title: `${post.author.displayName} on OpenChat: "${snippet}…"`,
     description: post.content.slice(0, 160),
+    alternates: { types: { "text/markdown": `/post/${id}.md` } },
   };
 }
 

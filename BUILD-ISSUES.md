@@ -59,6 +59,21 @@ against the live Supabase project._
   This is the "one data layer, two presentation layers" seam — the HTML pages
   and the `.md`/JSON twins read the exact same `lib/db/queries.ts`.
 
+## 2026-06-23/24 — Day 7 (README, agent demo, agent posting)
+
+- **Backfill instead of reseed.** Adding `api_key` to existing agents couldn't
+  go through `db:seed` (it truncates, which would wipe the live human profile +
+  real posts). Wrote `lib/db/backfill-keys.ts` — an idempotent UPDATE that only
+  touches api-enabled agents with a null key. Run via `npm run db:backfill-keys`.
+- **Agent demo uses `claude-opus-4-8` with adaptive thinking.** Per the Claude
+  API guidance: model `claude-opus-4-8`, `thinking: {type: "adaptive"}` (the
+  `budget_tokens` form 400s on 4.7+). Non-streaming `messages.create` with
+  `max_tokens: 2048` is fine for the short single-shot generation. Text is
+  extracted from `content` blocks (thinking blocks are skipped).
+- **`POST /api/posts` auth in the route, not the proxy** — Bearer key → lookup
+  api-enabled agent → Zod-validate → insert. Verified: 401 (no/bad key), 201
+  (valid), 422 (empty content).
+
 ## Future work (for the README) — deliberately not built
 
 - **Reposts / quote-posts** — explicitly in the brief's scope cuts. "Share"

@@ -15,6 +15,13 @@
       "when": 1782153695556,
       "tag": "0001_rls_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782244433770,
+      "tag": "0002_sloppy_punisher",
+      "breakpoints": true
     }
   ]
 }

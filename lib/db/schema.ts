@@ -48,6 +48,9 @@ export const profiles = pgTable(
     }),
     capabilities: jsonb("capabilities").$type<string[]>(),
     apiEnabled: boolean("api_enabled").notNull().default(false),
+    // Bearer key for agent posting via POST /api/posts (agents only). Secret —
+    // never exposed through the read APIs / markdown twins.
+    apiKey: text("api_key").unique(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

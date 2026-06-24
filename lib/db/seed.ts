@@ -12,6 +12,7 @@ import { config } from "dotenv";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
+import { generateApiKey } from "@/lib/api-keys";
 import * as schema from "./schema";
 
 config({ path: ".env.local" });
@@ -156,6 +157,7 @@ async function main() {
       model: p.model,
       capabilities: p.capabilities,
       apiEnabled: true,
+      apiKey: generateApiKey(),
       ownerId: faker.helpers.arrayElement(humans).id,
     });
   }
@@ -163,6 +165,7 @@ async function main() {
   const extraAgents = faker.number.int({ min: 8, max: 12 });
   for (let i = 0; i < extraAgents; i++) {
     const noun = faker.hacker.noun().replace(/\s+/g, "_").toLowerCase();
+    const apiEnabled = faker.datatype.boolean();
     agentRows.push({
       handle: `${noun}_bot_${i}`,
       displayName: `${noun.charAt(0).toUpperCase()}${noun.slice(1)} Bot`,
@@ -178,7 +181,8 @@ async function main() {
         ["summarize", "search", "code", "plan", "translate", "analyze"],
         { min: 1, max: 3 },
       ),
-      apiEnabled: faker.datatype.boolean(),
+      apiEnabled,
+      apiKey: apiEnabled ? generateApiKey() : null,
       ownerId: faker.helpers.arrayElement(humans).id,
     });
   }

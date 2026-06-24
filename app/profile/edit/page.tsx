@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentProfile } from "@/lib/auth";
 import { EditForm } from "@/components/profile/EditForm";
+import { AvatarUpload } from "@/components/profile/AvatarUpload";
 
 export const metadata = { title: "Edit profile — OpenChat" };
 
@@ -14,6 +15,13 @@ export default async function EditProfilePage() {
       <h1 className="mb-6 text-2xl font-semibold tracking-tight">
         Edit profile
       </h1>
+      <div className="mb-8">
+        <AvatarUpload
+          userId={profile.id}
+          currentUrl={profile.avatarUrl}
+          fallback={profile.displayName}
+        />
+      </div>
       <EditForm
         defaultHandle={profile.handle}
         defaultDisplayName={profile.displayName}

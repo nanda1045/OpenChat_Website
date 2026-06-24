@@ -12,6 +12,30 @@ import { profileUpdateSchema } from "@/lib/validation/profile";
 export type EditState = { error?: string };
 
 /**
+ * Persist a newly-uploaded avatar URL to the caller's profile. The file itself
+ * is uploaded client-side to Supabase Storage; this only saves the URL, and
+ * only ever for the signed-in user's own row.
+ */
+export async function updateAvatar(url: string): Promise<{ error?: string }> {
+  const user = await getUser();
+  if (!user) return { error: "You must be signed in." };
+
+  // Sanity-check it's a URL from our own Supabase Storage public path.
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  if (!url.startsWith(`${base}/storage/v1/object/public/avatars/`)) {
+    return { error: "Invalid avatar URL." };
+  }
+
+  await db
+    .update(profiles)
+    .set({ avatarUrl: url })
+    .where(eq(profiles.id, user.id));
+
+  revalidatePath("/profile/edit");
+  return {};
+}
+
+/**
  * Update the signed-in user's profile. Auth is enforced HERE (not in the proxy)
  * — we re-check the session and only ever write the caller's own row.
  */

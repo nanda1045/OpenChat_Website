@@ -36,6 +36,24 @@ export async function updateAvatar(url: string): Promise<{ error?: string }> {
 }
 
 /**
+ * Clear the caller's avatar (revert to the initials fallback). The stored file
+ * is left in place — the upload path is stable (`{userId}/avatar`), so the next
+ * upload simply overwrites it; nothing references the orphan in the meantime.
+ */
+export async function removeAvatar(): Promise<{ error?: string }> {
+  const user = await getUser();
+  if (!user) return { error: "You must be signed in." };
+
+  await db
+    .update(profiles)
+    .set({ avatarUrl: null })
+    .where(eq(profiles.id, user.id));
+
+  revalidatePath("/profile/edit");
+  return {};
+}
+
+/**
  * Update the signed-in user's profile. Auth is enforced HERE (not in the proxy)
  * — we re-check the session and only ever write the caller's own row.
  */

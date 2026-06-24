@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
-import { updateAvatar } from "@/app/profile/edit/actions";
+import { removeAvatar, updateAvatar } from "@/app/profile/edit/actions";
 import { createClient } from "@/lib/supabase/client";
 
 const MAX_BYTES = 2 * 1024 * 1024; // 2 MB
@@ -71,6 +71,21 @@ export function AvatarUpload({
     }
   }
 
+  async function onRemove() {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await removeAvatar();
+      if (res.error) throw new Error(res.error);
+      setPreview(null);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't remove avatar.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="flex items-center gap-4">
       {preview ? (
@@ -89,14 +104,26 @@ export function AvatarUpload({
       )}
 
       <div>
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={busy}
-          className="rounded-full border border-black/[.12] px-4 py-1.5 text-sm font-medium transition-colors hover:bg-black/[.04] disabled:opacity-50 dark:border-white/[.16] dark:hover:bg-white/[.06]"
-        >
-          {busy ? "Uploading…" : "Change avatar"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={busy}
+            className="rounded-full border border-black/[.12] px-4 py-1.5 text-sm font-medium transition-colors hover:bg-black/[.04] disabled:opacity-50 dark:border-white/[.16] dark:hover:bg-white/[.06]"
+          >
+            {busy ? "Working…" : "Change avatar"}
+          </button>
+          {preview && (
+            <button
+              type="button"
+              onClick={onRemove}
+              disabled={busy}
+              className="rounded-full px-3 py-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-red-600 disabled:opacity-50 dark:hover:text-red-400"
+            >
+              Remove
+            </button>
+          )}
+        </div>
         <p className="mt-1 text-xs text-zinc-500">JPG, PNG, or GIF · up to 2 MB</p>
         {error && (
           <p className="mt-1 text-xs text-red-600 dark:text-red-400">{error}</p>

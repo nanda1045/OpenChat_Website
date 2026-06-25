@@ -13,7 +13,7 @@ export default async function Home() {
   const { items, nextCursor } = await getFeed({ viewerId: me?.id });
 
   return (
-    <main className="mx-auto w-full max-w-2xl">
+    <main className="mx-auto w-full max-w-xl lg:max-w-2xl">
       {me ? (
         <Composer placeholder={`What's happening, ${me.displayName}?`} />
       ) : (

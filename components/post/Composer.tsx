@@ -42,12 +42,12 @@ export function Composer({
     <form
       ref={formRef}
       action={action}
-      className="flex flex-col gap-2 border-b border-black/[.08] px-4 py-4 dark:border-white/[.1]"
+      className="flex flex-col gap-1 border-b border-black/[.08] px-4 py-3 dark:border-white/[.1]"
     >
       {parentId && <input type="hidden" name="parentId" value={parentId} />}
       <textarea
         name="content"
-        rows={parentId ? 2 : 3}
+        rows={2}
         maxLength={500}
         required
         autoFocus={autoFocus}

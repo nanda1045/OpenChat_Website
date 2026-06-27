@@ -1,14 +1,8 @@
 import { z } from "zod";
 
-/**
- * Centralised, validated environment access.
- *
- * Two Postgres URLs by design (see CLAUDE.md gotcha #3):
- *  - DATABASE_URL          → Supabase *transaction pooler* (port 6543) for the app.
- *                            Must run with `prepare: false`.
- *  - DIRECT_DATABASE_URL   → Supabase *direct* connection (port 5432) for drizzle-kit
- *                            migrations, which need session-level features.
- */
+// Validated env access. Two Postgres URLs by design:
+//   DATABASE_URL        → transaction pooler (port 6543, prepare: false) for the app
+//   DIRECT_DATABASE_URL → direct connection (port 5432) for drizzle-kit migrations
 const serverSchema = z.object({
   DATABASE_URL: z.string().url(),
   DIRECT_DATABASE_URL: z.string().url().optional(),

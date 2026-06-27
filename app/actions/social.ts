@@ -8,11 +8,8 @@ import { db } from "@/lib/db/client";
 import { follows, likes, posts } from "@/lib/db/schema";
 import { createPostSchema } from "@/lib/validation/post";
 
-/**
- * All social writes. Authorization is enforced HERE (not in the proxy): every
- * action re-reads the session and only writes rows the caller owns. Drizzle
- * bypasses RLS, so this is the real gate (CLAUDE.md gotcha #6).
- */
+// Auth is enforced here, not in the proxy — Drizzle queries use the postgres
+// role which bypasses RLS, so server actions are the real authorization gate.
 
 export type PostActionState = { error?: string };
 
@@ -46,10 +43,7 @@ export async function createPost(
   return {};
 }
 
-/**
- * Delete a post you authored. Cascades to its replies and likes (FK ON DELETE
- * cascade). Owner-only — re-checked here since Drizzle bypasses RLS.
- */
+/** Delete own post — cascades to replies/likes via FK. Owner-only re-check. */
 export async function deletePost(
   postId: string,
 ): Promise<{ ok: boolean; error?: string }> {

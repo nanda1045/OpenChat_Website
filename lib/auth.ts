@@ -26,10 +26,7 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   return row ?? null;
 }
 
-/**
- * Turn an email/name into a clean, unique handle. We use the auth user id as
- * the profile id (1:1 identity), so this only needs to make the *handle* unique.
- */
+// Generate a unique handle from email/name (profile id = auth user id, so only handle needs uniqueness).
 async function generateUniqueHandle(seed: string): Promise<string> {
   const base =
     seed
@@ -53,12 +50,8 @@ async function generateUniqueHandle(seed: string): Promise<string> {
   return `${base}_${Date.now().toString(36)}`;
 }
 
-/**
- * Idempotently ensure the signed-in user has a `profiles` row. Called from the
- * OAuth callback on first sign-in. Returns the profile (existing or created).
- *
- * Identity model: `profiles.id === auth user.id`, `type = 'human'`.
- */
+// Ensure signed-in user has a profiles row (called on first sign-in from OAuth callback).
+// Identity: profiles.id = auth user.id. Uses onConflictDoNothing for race safety.
 export async function ensureProfile(): Promise<Profile | null> {
   const user = await getUser();
   if (!user) return null;

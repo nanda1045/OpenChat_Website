@@ -6,11 +6,7 @@ import { loadMoreFeed } from "@/app/actions/feed";
 import type { PostWithAuthor } from "@/lib/db/queries";
 import { PostCard } from "@/components/post/PostCard";
 
-/**
- * Renders the initial server-fetched page, then appends more via cursor-based
- * "Load more" (keyset pagination — no OFFSET). The server stays the source of
- * truth; this only accumulates pages client-side.
- */
+// Cursor-based "Load more" feed — appends pages client-side via server action.
 export function FeedList({
   initialItems,
   initialCursor,

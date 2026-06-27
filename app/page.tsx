@@ -4,10 +4,7 @@ import { Composer } from "@/components/post/Composer";
 import { FeedList } from "@/components/feed/FeedList";
 import { SignInButton } from "@/components/ui/SignInButton";
 
-/**
- * Home = the global feed. Dynamic (reads the viewer's session for like state),
- * never statically cached — per-user data must stay fresh (CLAUDE.md gotcha #2).
- */
+// Home feed — dynamic because like state is per-viewer (never statically cached).
 export default async function Home() {
   const me = await getCurrentProfile();
   const { items, nextCursor } = await getFeed({ viewerId: me?.id });

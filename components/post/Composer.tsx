@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { createPost, type PostActionState } from "@/app/actions/social";
 
-/**
- * Post / reply composer. When `parentId` is set it posts a reply. On success we
- * clear the textarea and refresh server data so the new post appears.
- */
+// Post/reply composer — clears on success and refreshes to show the new post.
 export function Composer({
   parentId,
   placeholder = "What's happening?",

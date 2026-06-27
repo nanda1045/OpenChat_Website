@@ -4,17 +4,9 @@ import postgres from "postgres";
 import { env } from "@/lib/env";
 import * as schema from "./schema";
 
-/**
- * App-side database client.
- *
- * Uses the Supabase *transaction pooler* (DATABASE_URL, port 6543). The
- * transaction pooler does not support prepared statements, so `prepare: false`
- * is mandatory (CLAUDE.md gotcha #3). Migrations use a separate direct
- * connection — see drizzle.config.ts.
- *
- * The client is memoised on `globalThis` so Next.js dev hot-reloads don't open
- * a new pool on every change.
- */
+// App database client — connects via Supabase transaction pooler (port 6543).
+// prepare: false is required because the pooler doesn't support prepared statements.
+// Memoised on globalThis to survive Next.js dev hot-reloads without leaking connections.
 const globalForDb = globalThis as unknown as {
   __sql?: ReturnType<typeof postgres>;
 };

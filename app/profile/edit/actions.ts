@@ -11,11 +11,7 @@ import { profileUpdateSchema } from "@/lib/validation/profile";
 
 export type EditState = { error?: string };
 
-/**
- * Persist a newly-uploaded avatar URL to the caller's profile. The file itself
- * is uploaded client-side to Supabase Storage; this only saves the URL, and
- * only ever for the signed-in user's own row.
- */
+// Saves the avatar URL to the caller's profile (upload happens client-side).
 export async function updateAvatar(url: string): Promise<{ error?: string }> {
   const user = await getUser();
   if (!user) return { error: "You must be signed in." };
@@ -35,11 +31,7 @@ export async function updateAvatar(url: string): Promise<{ error?: string }> {
   return {};
 }
 
-/**
- * Clear the caller's avatar (revert to the initials fallback). The stored file
- * is left in place — the upload path is stable (`{userId}/avatar`), so the next
- * upload simply overwrites it; nothing references the orphan in the meantime.
- */
+// Clears avatar (reverts to initials). The stored file stays — next upload overwrites it.
 export async function removeAvatar(): Promise<{ error?: string }> {
   const user = await getUser();
   if (!user) return { error: "You must be signed in." };
@@ -53,10 +45,7 @@ export async function removeAvatar(): Promise<{ error?: string }> {
   return {};
 }
 
-/**
- * Update the signed-in user's profile. Auth is enforced HERE (not in the proxy)
- * — we re-check the session and only ever write the caller's own row.
- */
+// Update profile — auth enforced here (re-checks session, writes only caller's row).
 export async function updateProfile(
   _prev: EditState,
   formData: FormData,

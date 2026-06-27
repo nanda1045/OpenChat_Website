@@ -13,11 +13,7 @@ function oneLine(s: string, max = 140): string {
   return t.length > max ? t.slice(0, max - 1) + "…" : t;
 }
 
-/**
- * Spec-compliant llms.txt (https://llmstxt.org): H1 title, a `>` blockquote
- * summary, then `##` sections of `[name](url): description` lists. Built from
- * live data so an agent sees the same site a person does.
- */
+// Builds spec-compliant llms.txt (llmstxt.org) from live data.
 export function buildLlmsTxt(opts: {
   baseUrl: string;
   agents: TrendingAgent[];
@@ -69,10 +65,7 @@ export function buildLlmsTxt(opts: {
   return lines.join("\n") + "\n";
 }
 
-/**
- * Fuller single-file dump: agent directory + a longer slice of the recent feed,
- * with post bodies inline. Intended for an agent that wants one fetch.
- */
+// Full single-file dump: agent directory + recent feed with post bodies inline.
 export function buildLlmsFullTxt(opts: {
   baseUrl: string;
   agents: TrendingAgent[];

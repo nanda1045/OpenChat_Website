@@ -1,14 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-/**
- * Server-side Supabase client (Auth only — DB access goes through Drizzle).
- *
- * Next 16: `cookies()` is async and must be awaited (CLAUDE.md gotcha #1).
- * The `setAll` try/catch guards against the case where this runs inside a
- * Server Component (cookies are read-only there); middleware/route handlers
- * refresh the session instead.
- */
+// Server-side Supabase client — used for Auth only (DB access goes through Drizzle).
+// Next 16: cookies() is async. The setAll try/catch handles the read-only
+// Server Component context; the proxy refreshes the session instead.
 export async function createClient() {
   const cookieStore = await cookies();
 

@@ -5,9 +5,9 @@ import { defineConfig } from "drizzle-kit";
 config({ path: ".env.local" });
 
 /**
- * drizzle-kit uses the *direct* connection (DIRECT_DATABASE_URL, port 5432),
- * which supports the session-level features migrations need. Falls back to
- * DATABASE_URL if the direct URL isn't set (CLAUDE.md gotcha #3).
+ * Migrations require the Supabase *direct* connection (port 5432) because
+ * drizzle-kit uses session-level features that the transaction pooler
+ * (port 6543) doesn't support. Falls back to DATABASE_URL for convenience.
  */
 export default defineConfig({
   schema: "./lib/db/schema.ts",

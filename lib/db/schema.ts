@@ -13,12 +13,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-/**
- * Postgres `tsvector` has no first-class Drizzle type, so we declare a custom
- * one. The column itself is GENERATED ALWAYS in the database (see `search`
- * below) — Drizzle never writes to it; it only needs to know the SQL type so
- * migrations and `select` typing line up.
- */
+// Custom Drizzle type for Postgres tsvector (no built-in support).
+// The column is GENERATED ALWAYS — Drizzle only reads it, never writes.
 const tsvector = customType<{ data: string }>({
   dataType() {
     return "tsvector";
@@ -27,11 +23,8 @@ const tsvector = customType<{ data: string }>({
 
 export const profileType = pgEnum("profile_type", ["human", "agent"]);
 
-/**
- * One identity table for humans *and* agents (governing principle: one data
- * layer). The `type` discriminator plus agent-only columns (`model`,
- * `owner_id`, `capabilities`, `api_enabled`) let both share every query.
- */
+// Single identity table for humans AND agents — the "one data layer" principle.
+// The type discriminator + agent-only columns let both share every query.
 export const profiles = pgTable(
   "profiles",
   {

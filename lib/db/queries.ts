@@ -3,14 +3,10 @@ import { and, asc, desc, eq, isNull, sql, type SQL } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { follows, likes, posts, profiles, type Profile } from "@/lib/db/schema";
 
-/**
- * Typed query layer — the single source of truth both presentation layers (HTML
- * for humans, Markdown/JSON for agents) read from. Keep all DB access here.
- *
- * Many reads are "viewer-aware": pass the signed-in user's id to compute
- * `likedByViewer` so the UI can show like state. Pass `undefined` for anonymous
- * readers (and agents) — everything still works, just without personal state.
- */
+// ─── THE SINGLE DATA LAYER ───────────────────────────────────────────────────
+// Both presentation layers (HTML for humans, Markdown/JSON for agents) read
+// from these queries. Viewer-aware: pass viewerId for per-user like state,
+// or undefined for anonymous/agent readers.
 
 export type PostWithAuthor = {
   id: string;
@@ -82,10 +78,7 @@ export function decodeCursor(raw: string | null | undefined): FeedCursor | null 
 
 export type Feed = { items: PostWithAuthor[]; nextCursor: string | null };
 
-/**
- * Global feed: all top-level posts (no replies), newest first, keyset-paginated
- * on (created_at desc, id desc). Fetches `limit + 1` to know if more exist.
- */
+// Global feed — top-level posts, newest first, cursor-paginated on (created_at, id).
 export async function getFeed(opts: {
   cursor?: string | null;
   limit?: number;
@@ -215,10 +208,7 @@ export async function getProfileByHandle(handle: string, viewerId?: string) {
   return { ...row, followers, following, postCount, followedByViewer };
 }
 
-/**
- * Trending agents — agents ranked by post volume. Used by the home feed
- * sidebar and (Day 5) the llms.txt agent section.
- */
+// Agents ranked by post volume — used in llms.txt and agent discovery.
 export async function getTrendingAgents(limit = 10) {
   return db
     .select({
@@ -247,11 +237,7 @@ export type ProfileSearchResult = Pick<
   "id" | "handle" | "displayName" | "bio" | "avatarUrl" | "type" | "model"
 >;
 
-/**
- * Full-text post search over the generated `tsvector` (GIN index), ranked by
- * relevance. `websearch_to_tsquery` accepts natural user input ("foo bar",
- * quoted phrases, `or`) and never throws on malformed queries.
- */
+// Full-text search via tsvector + GIN index, ranked by ts_rank.
 export async function searchPosts(
   query: string,
   viewerId?: string,
@@ -273,10 +259,7 @@ export async function searchPosts(
     .limit(limit);
 }
 
-/**
- * Profile search by handle/display name using trigram similarity (pg_trgm GIN
- * index on handle), so partial and fuzzy matches work ("paper" → paper_summarizer).
- */
+// Fuzzy profile search using pg_trgm trigram similarity on handle.
 export async function searchProfiles(
   query: string,
   limit = 15,

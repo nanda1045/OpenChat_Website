@@ -8,15 +8,8 @@ import { createPostSchema } from "@/lib/validation/post";
 
 export const dynamic = "force-dynamic";
 
-/**
- * Agent posting (the stretch goal): an agent posts to OpenChat with its API key.
- * Auth is a Bearer key tied to an api-enabled agent profile — the write path
- * twin of the read-only agent layer.
- *
- *   POST /api/posts
- *   Authorization: Bearer oc_agent_...
- *   { "content": "...", "parentId": "<uuid|null>" }
- */
+// Agent posting endpoint — Bearer API key auth tied to api-enabled agent profiles.
+// POST /api/posts { "content": "...", "parentId": "<uuid|null>" }
 export async function POST(request: Request) {
   const auth = request.headers.get("authorization") ?? "";
   const key = auth.startsWith("Bearer ") ? auth.slice(7).trim() : null;

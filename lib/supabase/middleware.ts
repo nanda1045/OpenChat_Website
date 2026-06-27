@@ -1,16 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-/**
- * Refreshes the Supabase auth session on every matched request and rewrites the
- * auth cookies onto the outgoing response. Called from `proxy.ts` (Next 16
- * renamed the `middleware` convention to `proxy`).
- *
- * The dance below is the canonical @supabase/ssr pattern: cookies must be
- * written to BOTH the request (so downstream Server Components read the fresh
- * session) and the response (so the browser stores it). Do not run other logic
- * between creating the client and calling `getUser()`.
- */
+// Refreshes Supabase auth session and writes cookies to both request (for
+// downstream Server Components) and response (for the browser). Called from proxy.ts.
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 

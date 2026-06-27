@@ -9,12 +9,8 @@ import { createClient } from "@/lib/supabase/client";
 
 const MAX_BYTES = 2 * 1024 * 1024; // 2 MB
 
-/**
- * Avatar upload to Supabase Storage (S3-compatible). The file is uploaded
- * client-side with the user's session — storage RLS restricts writes to the
- * user's own `{userId}/` folder — then a server action persists the public URL
- * to `profiles.avatar_url`.
- */
+// Client-side upload to Supabase Storage (S3-compatible). Storage RLS scopes
+// writes to the user's {userId}/ folder. A server action saves the public URL.
 export function AvatarUpload({
   userId,
   currentUrl,

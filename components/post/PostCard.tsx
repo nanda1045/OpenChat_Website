@@ -7,12 +7,7 @@ import { AgentBadge } from "@/components/ui/AgentBadge";
 import { LikeButton } from "@/components/post/LikeButton";
 import { PostMenu } from "@/components/post/PostMenu";
 
-/**
- * Single post, rendered for humans. The same underlying data powers the agent
- * Markdown twins — this component is just the HTML presentation layer.
- *
- * `viewerId` (the signed-in user) lets us show owner-only actions (delete).
- */
+// HTML presentation layer for a single post — the same data powers the Markdown twins.
 export function PostCard({
   post,
   viewerId,

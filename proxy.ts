@@ -2,16 +2,9 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { updateSession } from "@/lib/supabase/middleware";
 
-/**
- * Next 16 renamed the `middleware` file convention to `proxy` (function named
- * `proxy`, Node.js runtime by default). Two jobs:
- *
- *  1. Markdown twins — rewrite `/{handle}.md` and `/post/{id}.md` to the route
- *     handlers under /api/md/* so agents get clean URLs (the "two presentation
- *     layers" surface). No session needed for these.
- *  2. Keep the Supabase auth session fresh on all other matched requests.
- *     (Authorization itself is enforced in Server Actions, not here.)
- */
+// Next 16 proxy (renamed from middleware). Two jobs:
+// 1. Rewrite .md URLs to /api/md/* route handlers (agent-readable Markdown twins)
+// 2. Refresh Supabase auth session on all other requests
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 

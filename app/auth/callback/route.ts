@@ -3,11 +3,7 @@ import { NextResponse } from "next/server";
 import { ensureProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
-/**
- * OAuth callback. Google → Supabase → here with a `?code=`. We exchange it for
- * a session (sets cookies), make sure the user has a `profiles` row, then
- * redirect to wherever they were headed (`next`), defaulting to home.
- */
+// OAuth callback: exchanges code for session, creates profile on first sign-in.
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
